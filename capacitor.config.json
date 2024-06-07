@@ -1,6 +1,6 @@
 {
-  "appId": "io.ionic.Qr Code",
-  "appName": "Qr Code",
+  "appId": "io.ionic.QrScanner",
+  "appName": "QrScanner",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",
