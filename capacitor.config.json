@@ -1,0 +1,8 @@
+{
+  "appId": "io.ionic.Qr Code",
+  "appName": "Qr Code",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "build",
+  "cordova": {}
+}

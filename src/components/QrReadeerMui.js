@@ -1,7 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './QrStyles.css'
+import 'react-pro-sidebar/dist/css/styles.css'
 import QrScanner from 'qr-scanner'
 import QrFrame from '../assets/qr-frame.svg'
+import {
+  ProSidebar,
+  Menu,
+  MenuItem,
+  SidebarHeader,
+  SidebarContent,
+} from 'react-pro-sidebar'
+import 'react-pro-sidebar/dist/css/styles.css'
+import MenuIcon from '@mui/icons-material/Menu'
+import UploadIcon from '@mui/icons-material/Upload'
+import FlashOnIcon from '@mui/icons-material/FlashOn'
+import FlashOffIcon from '@mui/icons-material/FlashOff'
+import RotateRightIcon from '@mui/icons-material/RotateRight'
 
 const QrReader = () => {
   // QR States
@@ -14,22 +28,17 @@ const QrReader = () => {
 
   // Success
   const onScanSuccess = (result) => {
-    // Print the "result" to browser console.
     console.log('Scanned result:', result)
-    // Handle success.
-    // You can do whatever you want with the scanned result.
     setScannedResult(result?.data || result)
   }
 
   // Fail
   const onScanFail = (err) => {
-    // Print the "err" to browser console.
     console.log('Scan error:', err)
   }
 
   useEffect(() => {
     if (videoEl?.current && !scanner.current) {
-      // Instantiate the QR Scanner
       scanner.current = new QrScanner(videoEl?.current, onScanSuccess, {
         onDecodeError: onScanFail,
         preferredCamera: 'environment',
@@ -38,7 +47,6 @@ const QrReader = () => {
         overlay: qrBoxEl?.current || undefined,
       })
 
-      // Start QR Scanner
       scanner?.current
         ?.start()
         .then(() => setQrOn(true))
@@ -47,7 +55,6 @@ const QrReader = () => {
         })
     }
 
-    // Clean up on unmount.
     return () => {
       if (!videoEl?.current) {
         scanner?.current?.stop()
@@ -55,7 +62,6 @@ const QrReader = () => {
     }
   }, [])
 
-  // If "camera" is not allowed in browser permissions, show an alert.
   useEffect(() => {
     if (!qrOn)
       alert(
@@ -92,32 +98,52 @@ const QrReader = () => {
   }
 
   return (
-    <div className="qr-reader">
-      <div className="controls">
-        <label className="control-button upload-button">
-          <input type="file" accept="image/*" onChange={handleImageUpload} />
-        </label>
-        <button
-          onClick={toggleFlash}
-          className="control-button flash-button"
-        ></button>
-        <button className="control-button rotate-button"></button>
-      </div>
-      <div className="video-container">
-        <video ref={videoEl} className="qr-video"></video>
-        <div ref={qrBoxEl} className="qr-box">
-          <img
-            src={QrFrame}
-            alt="Qr Frame"
-            width={256}
-            height={256}
-            className="qr-frame"
-          />
+    <div className="qr-app">
+      <ProSidebar>
+        <SidebarHeader>
+          <Menu iconShape="square">
+            <MenuItem icon={<MenuIcon />}>Menu</MenuItem>
+          </Menu>
+        </SidebarHeader>
+        <SidebarContent>
+          <Menu iconShape="square">
+            <MenuItem icon={<UploadIcon />}>
+              <label className="upload-button">
+                Upload
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </label>
+            </MenuItem>
+            <MenuItem
+              icon={flashOn ? <FlashOffIcon /> : <FlashOnIcon />}
+              onClick={toggleFlash}
+            >
+              {flashOn ? 'Flash Off' : 'Flash On'}
+            </MenuItem>
+            <MenuItem icon={<RotateRightIcon />}>Rotate</MenuItem>
+          </Menu>
+        </SidebarContent>
+      </ProSidebar>
+      <div className="qr-reader">
+        <div className="video-container">
+          <video ref={videoEl} className="qr-video"></video>
+          <div ref={qrBoxEl} className="qr-box">
+            <img
+              src={QrFrame}
+              alt="Qr Frame"
+              width={256}
+              height={256}
+              className="qr-frame"
+            />
+          </div>
         </div>
+        {scannedResult && (
+          <p className="scanned-result">Scanned Result: {scannedResult}</p>
+        )}
       </div>
-      {scannedResult && (
-        <p className="scanned-result">Scanned Result: {scannedResult}</p>
-      )}
     </div>
   )
 }
